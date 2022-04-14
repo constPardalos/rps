@@ -2,16 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rock Paper Scissors</title>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>RPS</title>
+    <link href="styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <script defer src="scripts.js"></script>
 </head>
 <body>
 
-    <h1>Rock Paper Scissors</h1>
-    <button id="start-btn">Start Game</button>
+<h1>Rock Paper Scissors</h1>
 
-    <script src="scripts.js"></script>
-    
+<div class="container">
+    <div class="options">
+        <button class="option" value="Rock">Rock</button>
+        <button class="option" value="Paper">Paper</button>
+        <button class="option" value="Scissors">Scissors</button>
+    </div>
+
+    <p class="score"></p>
+    <p class="results"></p>
+
+    <button class="reset">New Game</button>
+</div>
+
 </body>
 </html>

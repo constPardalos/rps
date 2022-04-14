@@ -1,156 +1,106 @@
-// Rock Paper Scissors (RPS)
+const options = Array.from(document.querySelectorAll('.option'));
+options.forEach(option => option.addEventListener('click', () => {
+    playRound(option.getAttribute('value'));
+}));
 
-// Bind the game function on a button
-startButton = document.getElementById('start-btn');
-startButton.addEventListener('click', game);
+let playerScore = 0;
+let computerScore = 0;
 
-// Function that returns 1 of the 3 predefined choices
+const results = document.querySelector('.results');
+results.textContent = "";
+
+const score = document.querySelector('.score');
+score.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+
+const reset = document.querySelector('.reset');
+reset.addEventListener('click', resetGame);
+reset.style.cssText = 'visibility: hidden;';
+
+// Randomly select a choice for the computer
 function computerPlay() {
+    const randomNum = Math.floor(Math.random() * 3);
 
-    // Generate and store a random number between 0 and 2
-    randomNum = Math.floor(Math.random() * 3);
-
-    // Return one of the 3 strings based on the number
     if (randomNum === 0) {
-        return "rock";
+        return "Rock";
     } else if (randomNum === 1) {
-        return "paper";
+        return "Paper";
     } else {
-        return "scissors";
+        return "Scissors";
     }
 }
 
-// Function that takes player and computer choices,
-// compares them and returns the outcome
-function playRound(playerSelection, computerSelection) {
+// Compare player and computer choices, return the outcome and update the score
+function playRound(playerChoice) {
 
-    // If both choices are the same:
+    const playerSelection = playerChoice;
+    const computerSelection = computerPlay();
+
+    console.log(playerSelection + " vs " + computerSelection);
+
     if (playerSelection === computerSelection) {
-        return "Draw!";
+        results.textContent = "Tie! You both used " + computerSelection;
+    } else if (playerSelection === "Rock") {
+        if (computerSelection === "Paper") {
+            results.textContent = "You lose! Paper beats Rock";
+            computerScore += 1;
+        } else {
+            results.textContent = "You win! Rock beats Scissors";
+            playerScore += 1;
+        }
+    } else if (playerSelection === "Paper") {
+        if (computerSelection === "Rock") {
+            results.textContent = "You win! Paper beats Rock";
+            playerScore += 1;
+        } else {
+            results.textContent = "You lose! Scissors beat Paper";
+            computerScore += 1;
+        }
+    } else if (playerSelection === "Scissors") {
+        if (computerSelection === "Rock") {
+            results.textContent = "You lose! Rock beats Scissors";
+            computerScore += 1;
+        } else {
+            results.textContent = "You win! Scissors beat Paper";
+            playerScore += 1;
+        }
+    } else {
+        results.textContent = "Something went wrong";
     }
 
-    // If player's choice is "rock":
-    else if (playerSelection === "rock") {
-        // and computer's is either "paper" or "scissors":
-        if (computerSelection === "paper") {
-            return "You lose! Paper beats Rock";
-        } else {
-            return "You win! Rock beats Scissors";
-        }
-    }
-    // If player's choice is "paper":
-    else if (playerSelection === "paper") {
-        // and computer's is either "rock" or "scissors":
-        if (computerSelection === "rock") {
-            return "You win! Paper beats Rock";
-        } else {
-            return "You lose! Scissors beat Paper";
-        }
-    }
-    // If player's choice is "scissors":
-    else if (playerSelection === "scissors") {
-        // and computer's is either "rock" or "paper":
-        if (computerSelection === "rock") {
-            return "You lose! Rock beats scissors";
-        } else {
-            return "You win! Scissors beat Paper";
-        }
-    }
-    // In case of incorrect input:
-    else {
-        return "Something went wrong";
+    score.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+    checkScore();
+}
+
+// After each round check score to see if someone reached a score of 5
+function checkScore() {
+
+    if (playerScore === 5) {
+        results.textContent = "Game over. You are the winner!";
+        options.forEach(option => {
+            option.disabled = true;
+        });
+        reset.style.cssText = 'visibility: visible;';
+    } else if (computerScore === 5) {
+        results.textContent = "Game over. You are the loser!";
+        options.forEach(option => {
+            option.disabled = true;
+        });
+        reset.style.cssText = 'visibility: visible;';
     }
 }
 
-// Function that plays 5 rounds and returns the final score and outcome of the game
-function game() {
+// Reset everything and start new game
+function resetGame() {
 
-    console.log("----- GAME STARTED -----");
+    playerScore = 0;
+    computerScore = 0;
 
-    // Create the scoreboard
-    let playerScore = 0;
-    let computerScore = 0;
+    results.textContent = "";
+    score.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
 
-    // Variable to use if the game is canceled
-    let gameCanceled = false;
+    options.forEach(option => {
+        option.disabled = false;
+    });
 
-    // Start looping through the 5 rounds
-    for (let i = 0; i < 5; i++) {
-
-        // Ask user for input
-        let playerSelection = prompt(
-            "Round " + (i + 1) + " - Type Rock, Paper or Scissors to play:"
-        );
-
-        // If user clicks cancel:
-        if (playerSelection === null) {
-            gameCanceled = true;
-            break;
-        }
-        // If user clicks OK without entering something:
-        else if (playerSelection === "") {
-            console.log("Round " + (i + 1) + ": Invalidated. You did not enter a value.");
-        }
-        // If user enters a value:
-        else {
-
-            // Convert input to lower case
-            playerSelection = playerSelection.toLowerCase();
-
-            // If the value entered is not one of the expected:
-            if (playerSelection !== "rock" &&
-                playerSelection !== "paper" &&
-                playerSelection !== "scissors") {
-                console.log("Round " + (i + 1) + ": Invalidated. Value entered is not allowed.");
-            }
-            // If the value entered is correct:
-            else {
-
-                // Get a random choice for computer and store it
-                let computerSelection = computerPlay();
-
-                // Initialize the playRound function and store the resulting string
-                let gameRound = playRound(playerSelection, computerSelection);
-                console.log("Round " + (i + 1) + " :" + gameRound);
-
-                // If the resulting string includes the word "win", increase player's win count and display current score:
-                if (gameRound.includes("win")) {
-                    playerScore += 1;
-                    console.log("Wins: " + playerScore + " | " + "Losses: " + computerScore);
-                }
-                // If the resulting string includes the word "lose", increase computer's win count and display current score:
-                else if (gameRound.includes("lose")) {
-                    computerScore += 1;
-                    console.log("Wins: " + playerScore + " | " + "Losses: " + computerScore);
-                }
-            }
-        }
-    }
-
-    // If user clicked cancel:
-    if (gameCanceled) {
-        console.log("----- GAME CANCELED -----");
-    }
-    // If the loops finished successfully:
-    else {
-        // If player has more wins:
-        if (playerScore > computerScore) {
-            console.log("----- GAME COMPLETE -----");
-            console.log("Wins: " + playerScore + " | " + "Losses: " + computerScore);
-            console.log("Congratulations! You won the game!");
-        }
-        // If computer has more wins:
-        else if (playerScore < computerScore) {
-            console.log("----- GAME COMPLETE -----");
-            console.log("Wins: " + playerScore + " | " + "Losses: " + computerScore);
-            console.log("Oh no... You've lost the game!");
-        }
-        // If both have equal or no wins:
-        else {
-            console.log("----- GAME COMPLETE -----");
-            console.log("Wins: " + playerScore + " | " + "Losses: " + computerScore);
-            console.log("The game ended with draw.");
-        }
-    }
-
+    reset.style.cssText = 'visibility: hidden;';
 }
